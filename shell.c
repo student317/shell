@@ -32,8 +32,21 @@ static int do_redir(token_t *token, int ntokens, int *inputp, int *outputp) {
   for (int i = 0; i < ntokens; i++) {
     /* TODO: Handle tokens and open files as requested. */
 #ifdef STUDENT
-    (void)mode;
-    (void)MaybeClose;
+	if(token[i]==T_OUTPUT){
+	i++;
+	*outputp=open(token[i],O_RDWR);
+	}
+	else
+ 	if(token[i]==T_INPUT){
+ 	i++;
+	*inputp=open(token[i],O_RDWR);
+ 	}
+ 	else
+ 	n++;
+	
+	token[n]=token[i];
+    //(void)mode;
+   // (void)MaybeClose;
 #endif /* !STUDENT */
   }
 
@@ -59,6 +72,19 @@ static int do_job(token_t *token, int ntokens, bool bg) {
 
   /* TODO: Start a subprocess, create a job and monitor it. */
 #ifdef STUDENT
+int pid=fork();
+if(pid==0){
+
+execv(strcat("/bin",token[0]),token+1)
+}
+else{
+int status;
+int numb = addjob(tcgetpgrp(0),bg);
+addproc(numb,pid,&token);
+
+waitpid(pid, &status, 0); 
+}
+
 #endif /* !STUDENT */
 
   Sigprocmask(SIG_SETMASK, &mask, NULL);
